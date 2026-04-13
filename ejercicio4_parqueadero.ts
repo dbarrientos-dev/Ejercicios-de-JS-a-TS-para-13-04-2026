@@ -1,5 +1,5 @@
 /**
- * SISTEMA DE GESTIÓN DE PARQUEADERO - CORREGIDO
+ * SISTEMA DE GESTIÓN DE PARQUEADERO - VERSIÓN ROBUSTA
  */
 
 enum TipoVehiculo {
@@ -8,25 +8,33 @@ enum TipoVehiculo {
     CAMIONETA = 3
 }
 
-/**
- * SOLUCIÓN ERROR 1: Tipado explícito de la constante Record.
- * Usamos Record<TipoVehiculo, number> para que TS sepa que las llaves son del Enum.
- */
+// Tarifas tipadas correctamente
 const TARIFAS: Record<TipoVehiculo, number> = {
     [TipoVehiculo.MOTO]: 2000,
     [TipoVehiculo.CARRO]: 4000,
     [TipoVehiculo.CAMIONETA]: 6000
 };
 
-const UMBRAL_DESCUENTO = 8;
+// Nombres de tipos (evita switch)
+const NOMBRES: Record<TipoVehiculo, string> = {
+    [TipoVehiculo.MOTO]: "Moto",
+    [TipoVehiculo.CARRO]: "Carro",
+    [TipoVehiculo.CAMIONETA]: "Camioneta"
+};
+
+const HORAS_MIN_DESCUENTO = 8;
 const PORCENTAJE_DESCUENTO = 0.20;
 
+// Datos de entrada
 const tiposEntrada: number[] = [1, 2, 3, 1, 3, 2, 1];
 const horasEntrada: number[] = [3, 9, 5, 10, 2, 8, 6];
 
-/**
- * SOLUCIÓN ERROR 2: Tipado del objeto acumulador para evitar errores de referencia.
- */
+// Validación básica
+if (tiposEntrada.length !== horasEntrada.length) {
+    throw new Error("❌ Error: Datos inconsistentes (tipos vs horas)");
+}
+
+// Contadores
 interface IContadores {
     motos: number;
     carros: number;
@@ -34,49 +42,45 @@ interface IContadores {
 }
 
 let contadores: IContadores = { motos: 0, carros: 0, camionetas: 0 };
-let ingresoTotal: number = 0;
-let sumaHoras: number = 0;
-let totalVehiculos: number = 0;
+let ingresoTotal = 0;
+let sumaHoras = 0;
+let totalVehiculos = 0;
 
 for (let i = 0; i < tiposEntrada.length; i++) {
-    const tipoRaw: number = tiposEntrada[i];
-    const horas: number = horasEntrada[i];
+    const tipoRaw = tiposEntrada[i];
+    const horas = horasEntrada[i];
 
-    // Casteo seguro para que TS reconozca el valor dentro del Enum
     const tipo = tipoRaw as TipoVehiculo;
-    
-    // Si el tipo no existe en nuestras tarifas, es inválido
-    if (!TARIFAS[tipo]) {
+
+    // Validación correcta
+    if (!(tipo in TARIFAS)) {
         console.log(`⚠️ Registro ${i + 1}: Tipo ${tipoRaw} inválido. Saltando...`);
         continue;
     }
 
-    let tarifaHora: number = TARIFAS[tipo];
-    let tipoTexto: string = "";
+    const tarifaHora = TARIFAS[tipo];
+    const tipoTexto = NOMBRES[tipo];
 
-    switch (tipo) {
-        case TipoVehiculo.MOTO:
-            tipoTexto = "Moto";
-            contadores.motos++;
-            break;
-        case TipoVehiculo.CARRO:
-            tipoTexto = "Carro";
-            contadores.carros++;
-            break;
-        case TipoVehiculo.CAMIONETA:
-            tipoTexto = "Camioneta";
-            contadores.camionetas++;
-            break;
-    }
+    // Contadores
+    if (tipo === TipoVehiculo.MOTO) contadores.motos++;
+    if (tipo === TipoVehiculo.CARRO) contadores.carros++;
+    if (tipo === TipoVehiculo.CAMIONETA) contadores.camionetas++;
 
-    const costoBase: number = tarifaHora * horas;
-    const aplicaDescuento: boolean = horas > UMBRAL_DESCUENTO;
-    const valorDescuento: number = aplicaDescuento ? costoBase * PORCENTAJE_DESCUENTO : 0;
-    const totalPagar: number = costoBase - valorDescuento;
+    const costoBase = tarifaHora * horas;
+
+    // ✅ CORRECCIÓN CLAVE
+    const aplicaDescuento = horas >= HORAS_MIN_DESCUENTO;
+
+    const valorDescuento = aplicaDescuento
+        ? costoBase * PORCENTAJE_DESCUENTO
+        : 0;
+
+    const totalPagar = costoBase - valorDescuento;
 
     console.log(`\n--- VEHÍCULO ${i + 1} REGISTRADO ---`);
     console.log(`Tipo:      ${tipoTexto}`);
     console.log(`Tiempo:    ${horas} horas`);
+    console.log(`Estado:    ${aplicaDescuento ? "CON DESCUENTO" : "SIN DESCUENTO"}`);
     console.log(`Total:     $${totalPagar.toLocaleString("es-CO")}`);
 
     ingresoTotal += totalPagar;
@@ -84,9 +88,19 @@ for (let i = 0; i < tiposEntrada.length; i++) {
     totalVehiculos++;
 }
 
-const promedioHoras: number = totalVehiculos > 0 ? sumaHoras / totalVehiculos : 0;
+// Promedio seguro
+const promedioHoras = totalVehiculos > 0
+    ? sumaHoras / totalVehiculos
+    : 0;
 
+// Resumen
 console.log("\n" + "=".repeat(40));
-console.log(`INGRESO TOTAL: $${ingresoTotal.toLocaleString("es-CO")}`);
-console.log(`Promedio Permanencia: ${promedioHoras.toFixed(1)} horas`);
+console.log("         RESUMEN GENERAL");
+console.log("=".repeat(40));
+console.log(`Motos:        ${contadores.motos}`);
+console.log(`Carros:       ${contadores.carros}`);
+console.log(`Camionetas:   ${contadores.camionetas}`);
+console.log("-".repeat(40));
+console.log(`TOTAL INGRESO: $${ingresoTotal.toLocaleString("es-CO")}`);
+console.log(`PROMEDIO:      ${promedioHoras.toFixed(1)} horas`);
 console.log("=".repeat(40));
