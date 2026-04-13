@@ -73,3 +73,5 @@ console.log(`Total de clientes:       ${clientes.length}`);
 console.log(`Clientes beneficiados:   ${clientesConDescuento}`);
 console.log(`Ingreso total de caja:   $${totalDia.toLocaleString("es-CO")}`);
 console.log("=".repeat(25));
+
+mero console.error();
