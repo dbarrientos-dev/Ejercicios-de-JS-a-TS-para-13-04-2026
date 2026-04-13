@@ -19,12 +19,13 @@ const PRECIO_HORA = 5000;
 // Variables
 let totalDia = 0;
 let clientesConDescuento = 0;
+let numeroCliente = 0;
 
 // Recorrer clientes
-for (let i = 0; i < clientes.length; i++) {
-    let cliente = clientes[i];
+for (const cliente of clientes) {
+    numeroCliente++;
 
-    let subtotal = cliente.horas * PRECIO_HORA;
+    const subtotal = cliente.horas * PRECIO_HORA;
     let descuento = 0;
 
     // Si tiene más de 12 horas → descuento
@@ -33,11 +34,11 @@ for (let i = 0; i < clientes.length; i++) {
         clientesConDescuento++;
     }
 
-    let total = subtotal - descuento;
+    const total = subtotal - descuento;
     totalDia += total;
 
     // Mostrar info
-    console.log("------ CLIENTE " + (i + 1) + " ------");
+    console.log("------ CLIENTE " + numeroCliente + " ------");
     console.log("Nombre: " + cliente.nombre);
     console.log("Horas: " + cliente.horas);
     console.log("Subtotal: $" + subtotal);

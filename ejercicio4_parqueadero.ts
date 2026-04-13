@@ -20,10 +20,15 @@ let camionetas = 0;
 let totalDinero = 0;
 let totalHoras = 0;
 
-for (let i = 0; i < tipos.length; i++) {
+let vehiculosProcesados = 0;
 
-    let tipo = tipos[i];
-    let tiempo = horas[i];
+for (const [indice, tipo] of tipos.entries()) {
+    const tiempo = horas[indice];
+
+    // Validación explícita para strict mode con arreglos paralelos.
+    if (tiempo === undefined) {
+        continue;
+    }
 
     let tarifa = 0;
     let nombre = "";
@@ -33,23 +38,23 @@ for (let i = 0; i < tipos.length; i++) {
         tarifa = TARIFA_MOTO;
         nombre = "Moto";
         motos++;
-    } 
+    }
     else if (tipo === CARRO) {
         tarifa = TARIFA_CARRO;
         nombre = "Carro";
         carros++;
-    } 
+    }
     else if (tipo === CAMIONETA) {
         tarifa = TARIFA_CAMIONETA;
         nombre = "Camioneta";
         camionetas++;
-    } 
+    }
     else {
         console.log("Tipo inválido");
         continue;
     }
 
-    let costo = tarifa * tiempo;
+    const costo = tarifa * tiempo;
     let descuento = 0;
 
     // Descuento si >= 8 horas
@@ -57,7 +62,7 @@ for (let i = 0; i < tipos.length; i++) {
         descuento = costo * 0.20;
     }
 
-    let total = costo - descuento;
+    const total = costo - descuento;
 
     console.log("----------------------");
     console.log("Vehículo: " + nombre);
@@ -66,12 +71,13 @@ for (let i = 0; i < tipos.length; i++) {
 
     totalDinero = totalDinero + total;
     totalHoras = totalHoras + tiempo;
+    vehiculosProcesados++;
 }
 
 // Promedio
 let promedio = 0;
-if (tipos.length > 0) {
-    promedio = totalHoras / tipos.length;
+if (vehiculosProcesados > 0) {
+    promedio = totalHoras / vehiculosProcesados;
 }
 
 // Resumen

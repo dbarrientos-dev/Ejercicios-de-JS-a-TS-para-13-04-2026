@@ -5,9 +5,19 @@ const SALARIO_MINIMO = 1300000;
 const SUBSIDIO_12 = SALARIO_MINIMO * 0.12;
 const SUBSIDIO_15 = SALARIO_MINIMO * 0.15;
 
-// Datos
-const nombres = ["Carlos Pérez", "María López", "Juan Torres", "Rosa Gómez", "Luis Herrera"];
-const edades = [65, 82, 45, 78, 91];
+interface Persona {
+    nombre: string;
+    edad: number;
+}
+
+// Datos en una sola estructura para evitar desincronización
+const personas: Persona[] = [
+    { nombre: "Carlos Pérez", edad: 65 },
+    { nombre: "María López", edad: 82 },
+    { nombre: "Juan Torres", edad: 45 },
+    { nombre: "Rosa Gómez", edad: 78 },
+    { nombre: "Luis Herrera", edad: 91 }
+];
 
 // Contadores
 let cont60a80 = 0;
@@ -18,21 +28,18 @@ let totalDinero = 0;
 console.log("=== SUBSIDIOS ===");
 
 // Recorrer personas
-for (let i = 0; i < nombres.length; i++) {
-
-    let nombre = nombres[i];
-    let edad = edades[i];
-
+for (const persona of personas) {
+    const { nombre, edad } = persona;
     let subsidio = 0;
 
     if (edad >= 60 && edad <= 80) {
         subsidio = SUBSIDIO_12;
         cont60a80++;
-    } 
+    }
     else if (edad > 80) {
         subsidio = SUBSIDIO_15;
         cont80mas++;
-    } 
+    }
     else {
         contNo++;
     }
@@ -52,7 +59,7 @@ for (let i = 0; i < nombres.length; i++) {
 console.log("==================");
 console.log("RESUMEN");
 
-console.log("Total personas: " + nombres.length);
+console.log("Total personas: " + personas.length);
 console.log("60 a 80 años: " + cont60a80);
 console.log("Más de 80: " + cont80mas);
 console.log("No aplican: " + contNo);

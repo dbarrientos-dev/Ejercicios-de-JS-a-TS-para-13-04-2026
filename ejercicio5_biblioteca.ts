@@ -27,18 +27,26 @@ let contadorLibrosRetrasados: number = 0;
  * PROCESAMIENTO PRINCIPAL
  * Recorremos los usuarios y, dentro de cada uno, sus libros prestados.
  */
-for (let i = 0; i < usuarios.length; i++) {
-    const nombre = usuarios[i];
-    const libros = prestamosPorUsuario[i];
+for (const [indiceUsuario, nombre] of usuarios.entries()) {
+    const libros = prestamosPorUsuario[indiceUsuario];
+
+    // Validación explícita para strict mode en acceso por índice.
+    if (libros === undefined) {
+        continue;
+    }
+
     let acumuladoUsuario: number = 0;
 
     console.log(`\n--- EXPEDIENTE: ${nombre.toUpperCase()} ---`);
     console.log(`Libros procesados: ${libros.length}`);
 
     // Procesamiento individual de libros
-    for (let j = 0; j < libros.length; j++) {
-        const diasPrestamo = libros[j];
-        
+    for (const [indiceLibro, diasPrestamo] of libros.entries()) {
+        // Validación explícita para strict mode antes de operar.
+        if (diasPrestamo === undefined) {
+            continue;
+        }
+
         // Calculamos los días de retraso (mínimo 0)
         const diasRetraso = Math.max(0, diasPrestamo - DIAS_GRACIA);
         let multaLibro = 0;
@@ -46,10 +54,10 @@ for (let i = 0; i < usuarios.length; i++) {
         // Lógica de cálculo de multa
         if (diasRetraso === 0) {
             contadorLibrosPuntuales++;
-            console.log(`  Libro ${j + 1}: [PUNTUAL] (${diasPrestamo} días)`);
+            console.log(`  Libro ${indiceLibro + 1}: [PUNTUAL] (${diasPrestamo} días)`);
         } else {
             contadorLibrosRetrasados++;
-            
+
             // Cálculo base: días de retraso por la multa diaria
             multaLibro = diasRetraso * MULTA_DIARIA;
 
@@ -58,7 +66,7 @@ for (let i = 0; i < usuarios.length; i++) {
                 multaLibro += RECARGO_GRAVE;
             }
 
-            console.log(`  Libro ${j + 1}: [RETRASO] ${diasRetraso} días extra - Multa: $${multaLibro.toLocaleString("es-CO")}`);
+            console.log(`  Libro ${indiceLibro + 1}: [RETRASO] ${diasRetraso} días extra - Multa: $${multaLibro.toLocaleString("es-CO")}`);
         }
 
         acumuladoUsuario += multaLibro;
