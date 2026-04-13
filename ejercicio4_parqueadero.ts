@@ -1,106 +1,89 @@
-/**
- * SISTEMA DE GESTIÓN DE PARQUEADERO - VERSIÓN ROBUSTA
- */
+// Tipos de vehículo (simple)
+const MOTO = 1;
+const CARRO = 2;
+const CAMIONETA = 3;
 
-enum TipoVehiculo {
-    MOTO = 1,
-    CARRO = 2,
-    CAMIONETA = 3
-}
+// Tarifas
+const TARIFA_MOTO = 2000;
+const TARIFA_CARRO = 4000;
+const TARIFA_CAMIONETA = 6000;
 
-// Tarifas tipadas correctamente
-const TARIFAS: Record<TipoVehiculo, number> = {
-    [TipoVehiculo.MOTO]: 2000,
-    [TipoVehiculo.CARRO]: 4000,
-    [TipoVehiculo.CAMIONETA]: 6000
-};
-
-// Nombres de tipos (evita switch)
-const NOMBRES: Record<TipoVehiculo, string> = {
-    [TipoVehiculo.MOTO]: "Moto",
-    [TipoVehiculo.CARRO]: "Carro",
-    [TipoVehiculo.CAMIONETA]: "Camioneta"
-};
-
-const HORAS_MIN_DESCUENTO = 8;
-const PORCENTAJE_DESCUENTO = 0.20;
-
-// Datos de entrada
-const tiposEntrada: number[] = [1, 2, 3, 1, 3, 2, 1];
-const horasEntrada: number[] = [3, 9, 5, 10, 2, 8, 6];
-
-// Validación básica
-if (tiposEntrada.length !== horasEntrada.length) {
-    throw new Error("❌ Error: Datos inconsistentes (tipos vs horas)");
-}
+// Datos
+const tipos = [1, 2, 3, 1, 3, 2, 1];
+const horas = [3, 9, 5, 10, 2, 8, 6];
 
 // Contadores
-interface IContadores {
-    motos: number;
-    carros: number;
-    camionetas: number;
-}
+let motos = 0;
+let carros = 0;
+let camionetas = 0;
 
-let contadores: IContadores = { motos: 0, carros: 0, camionetas: 0 };
-let ingresoTotal = 0;
-let sumaHoras = 0;
-let totalVehiculos = 0;
+let totalDinero = 0;
+let totalHoras = 0;
 
-for (let i = 0; i < tiposEntrada.length; i++) {
-    const tipoRaw = tiposEntrada[i];
-    const horas = horasEntrada[i];
+for (let i = 0; i < tipos.length; i++) {
 
-    const tipo = tipoRaw as TipoVehiculo;
+    let tipo = tipos[i];
+    let tiempo = horas[i];
 
-    // Validación correcta
-    if (!(tipo in TARIFAS)) {
-        console.log(`⚠️ Registro ${i + 1}: Tipo ${tipoRaw} inválido. Saltando...`);
+    let tarifa = 0;
+    let nombre = "";
+
+    // Determinar tipo
+    if (tipo === MOTO) {
+        tarifa = TARIFA_MOTO;
+        nombre = "Moto";
+        motos++;
+    } 
+    else if (tipo === CARRO) {
+        tarifa = TARIFA_CARRO;
+        nombre = "Carro";
+        carros++;
+    } 
+    else if (tipo === CAMIONETA) {
+        tarifa = TARIFA_CAMIONETA;
+        nombre = "Camioneta";
+        camionetas++;
+    } 
+    else {
+        console.log("Tipo inválido");
         continue;
     }
 
-    const tarifaHora = TARIFAS[tipo];
-    const tipoTexto = NOMBRES[tipo];
+    let costo = tarifa * tiempo;
+    let descuento = 0;
 
-    // Contadores
-    if (tipo === TipoVehiculo.MOTO) contadores.motos++;
-    if (tipo === TipoVehiculo.CARRO) contadores.carros++;
-    if (tipo === TipoVehiculo.CAMIONETA) contadores.camionetas++;
+    // Descuento si >= 8 horas
+    if (tiempo >= 8) {
+        descuento = costo * 0.20;
+    }
 
-    const costoBase = tarifaHora * horas;
+    let total = costo - descuento;
 
-    // ✅ CORRECCIÓN CLAVE
-    const aplicaDescuento = horas >= HORAS_MIN_DESCUENTO;
+    console.log("----------------------");
+    console.log("Vehículo: " + nombre);
+    console.log("Horas: " + tiempo);
+    console.log("Total: $" + total);
 
-    const valorDescuento = aplicaDescuento
-        ? costoBase * PORCENTAJE_DESCUENTO
-        : 0;
-
-    const totalPagar = costoBase - valorDescuento;
-
-    console.log(`\n--- VEHÍCULO ${i + 1} REGISTRADO ---`);
-    console.log(`Tipo:      ${tipoTexto}`);
-    console.log(`Tiempo:    ${horas} horas`);
-    console.log(`Estado:    ${aplicaDescuento ? "CON DESCUENTO" : "SIN DESCUENTO"}`);
-    console.log(`Total:     $${totalPagar.toLocaleString("es-CO")}`);
-
-    ingresoTotal += totalPagar;
-    sumaHoras += horas;
-    totalVehiculos++;
+    totalDinero = totalDinero + total;
+    totalHoras = totalHoras + tiempo;
 }
 
-// Promedio seguro
-const promedioHoras = totalVehiculos > 0
-    ? sumaHoras / totalVehiculos
-    : 0;
+// Promedio
+let promedio = 0;
+if (tipos.length > 0) {
+    promedio = totalHoras / tipos.length;
+}
 
 // Resumen
-console.log("\n" + "=".repeat(40));
-console.log("         RESUMEN GENERAL");
-console.log("=".repeat(40));
-console.log(`Motos:        ${contadores.motos}`);
-console.log(`Carros:       ${contadores.carros}`);
-console.log(`Camionetas:   ${contadores.camionetas}`);
-console.log("-".repeat(40));
-console.log(`TOTAL INGRESO: $${ingresoTotal.toLocaleString("es-CO")}`);
-console.log(`PROMEDIO:      ${promedioHoras.toFixed(1)} horas`);
-console.log("=".repeat(40));
+console.log("======================");
+console.log("RESUMEN");
+
+console.log("Motos: " + motos);
+console.log("Carros: " + carros);
+console.log("Camionetas: " + camionetas);
+
+console.log("----------------------");
+console.log("Total ganado: $" + totalDinero);
+console.log("Promedio horas: " + promedio);
+
+console.log("======================");

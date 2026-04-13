@@ -1,19 +1,10 @@
-/**
- * Estructura de datos para representar a un cliente.
- */
+// Tipo de dato para cliente
 interface Cliente {
     nombre: string;
     horas: number;
 }
 
-// Configuración
-const PRECIO_HORA = 5000;
-const UMBRAL_DESCUENTO = 12;
-const PORCENTAJE_DESCUENTO = 0.30;
-
-/**
- * Base de datos ficticia
- */
+// Datos
 const clientes: Cliente[] = [
     { nombre: "pangolin", horas: 15 },
     { nombre: "marulete", horas: 10 },
@@ -22,57 +13,41 @@ const clientes: Cliente[] = [
     { nombre: "tio gilipollas de cj", horas: 13 }
 ];
 
-// Acumuladores
+// Configuración
+const PRECIO_HORA = 5000;
+
+// Variables
 let totalDia = 0;
 let clientesConDescuento = 0;
 
-/**
- * Función para calcular factura
- */
-function calcularFactura(cliente: Cliente, index: number): number {
-    const { nombre, horas } = cliente;
+// Recorrer clientes
+for (let i = 0; i < clientes.length; i++) {
+    let cliente = clientes[i];
 
-    const subtotal = horas * PRECIO_HORA;
-    const aplicaDescuento = horas >= UMBRAL_DESCUENTO;
+    let subtotal = cliente.horas * PRECIO_HORA;
+    let descuento = 0;
 
-    const descuento = aplicaDescuento
-        ? subtotal * PORCENTAJE_DESCUENTO
-        : 0;
-
-    const total = subtotal - descuento;
-
-    if (aplicaDescuento) {
+    // Si tiene más de 12 horas → descuento
+    if (cliente.horas >= 12) {
+        descuento = subtotal * 0.30;
         clientesConDescuento++;
     }
 
-    // Salida
-    console.log(`\n--- CLIENTE ${index + 1}: ${nombre.toUpperCase()} ---`);
-    console.log(`Horas alquiladas: ${horas}`);
-    console.log(`Subtotal: $${subtotal.toLocaleString("es-CO")}`);
-    console.log(`Descuento (${PORCENTAJE_DESCUENTO * 100}%): $${descuento.toLocaleString("es-CO")}`);
-    console.log(aplicaDescuento ? "Estado: [CON DESCUENTO]" : "Estado: [SIN DESCUENTO]");
-    console.log(`Total a pagar: $${total.toLocaleString("es-CO")}`);
+    let total = subtotal - descuento;
+    totalDia += total;
 
-    return total;
+    // Mostrar info
+    console.log("------ CLIENTE " + (i + 1) + " ------");
+    console.log("Nombre: " + cliente.nombre);
+    console.log("Horas: " + cliente.horas);
+    console.log("Subtotal: $" + subtotal);
+    console.log("Descuento: $" + descuento);
+    console.log("Total: $" + total);
+    console.log("");
 }
 
-/**
- * Procesamiento
- */
-clientes.forEach((cliente, index) => {
-    totalDia += calcularFactura(cliente, index);
-});
-
-/**
- * Reporte final
- */
-console.log("\n" + "=".repeat(25));
-console.log("   RESUMEN DEL DÍA");
-console.log("=".repeat(25));
-console.log(`Total de clientes:       ${clientes.length}`);
-console.log(`Clientes beneficiados:   ${clientesConDescuento}`);
-console.log(`Ingreso total de caja:   $${totalDia.toLocaleString("es-CO")}`);
-console.log("=".repeat(25));
-
-mero console.error();
-cdbbhbh
+// Resumen final
+console.log("===== RESUMEN =====");
+console.log("Clientes: " + clientes.length);
+console.log("Con descuento: " + clientesConDescuento);
+console.log("Total ganado: $" + totalDia);
