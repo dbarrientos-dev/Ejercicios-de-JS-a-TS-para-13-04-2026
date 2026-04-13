@@ -21,10 +21,8 @@ let totalDia = 0;
 let clientesConDescuento = 0;
 
 // Recorrer clientes
-for (let i = 0; i < clientes.length; i++) {
-    let cliente = clientes[i];
-
-    let subtotal = cliente.horas * PRECIO_HORA;
+for (const [i, cliente] of clientes.entries()) {
+    const subtotal = cliente.horas * PRECIO_HORA;
     let descuento = 0;
 
     // Si tiene más de 12 horas → descuento
@@ -33,7 +31,7 @@ for (let i = 0; i < clientes.length; i++) {
         clientesConDescuento++;
     }
 
-    let total = subtotal - descuento;
+    const total = subtotal - descuento;
     totalDia += total;
 
     // Mostrar info
