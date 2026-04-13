@@ -15,6 +15,7 @@ const clientes: Cliente[] = [
 
 // Configuración
 const PRECIO_HORA = 5000;
+const HORAS_MIN_DESCUENTO = 12;
 
 // Variables
 let totalDia = 0;
@@ -27,8 +28,8 @@ for (let i = 0; i < clientes.length; i++) {
     let subtotal = cliente.horas * PRECIO_HORA;
     let descuento = 0;
 
-    // Si tiene más de 12 horas → descuento
-    if (cliente.horas >= 12) {
+    // Si tiene 12 horas o más → descuento
+    if (cliente.horas >= HORAS_MIN_DESCUENTO) {
         descuento = subtotal * 0.30;
         clientesConDescuento++;
     }
@@ -49,5 +50,5 @@ for (let i = 0; i < clientes.length; i++) {
 // Resumen final
 console.log("===== RESUMEN =====");
 console.log("Clientes: " + clientes.length);
-console.log("Con descuento: " + clientesConDescuento);
+console.log("Con descuento (12 h o más): " + clientesConDescuento);
 console.log("Total ganado: $" + totalDia);
