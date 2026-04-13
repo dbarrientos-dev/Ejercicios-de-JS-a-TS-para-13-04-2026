@@ -75,3 +75,4 @@ console.log(`Ingreso total de caja:   $${totalDia.toLocaleString("es-CO")}`);
 console.log("=".repeat(25));
 
 mero console.error();
+cdbbhbh
