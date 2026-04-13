@@ -27,18 +27,22 @@ let contadorLibrosRetrasados: number = 0;
  * PROCESAMIENTO PRINCIPAL
  * Recorremos los usuarios y, dentro de cada uno, sus libros prestados.
  */
-for (let i = 0; i < usuarios.length; i++) {
-    const nombre = usuarios[i];
+for (const [i, nombre] of usuarios.entries()) {
     const libros = prestamosPorUsuario[i];
+
+    if (libros === undefined) {
+        console.log(`\n--- EXPEDIENTE: ${nombre.toUpperCase()} ---`);
+        console.log("Sin datos de préstamos. Registro omitido.");
+        continue;
+    }
+
     let acumuladoUsuario: number = 0;
 
     console.log(`\n--- EXPEDIENTE: ${nombre.toUpperCase()} ---`);
     console.log(`Libros procesados: ${libros.length}`);
 
     // Procesamiento individual de libros
-    for (let j = 0; j < libros.length; j++) {
-        const diasPrestamo = libros[j];
-        
+    for (const [j, diasPrestamo] of libros.entries()) {
         // Calculamos los días de retraso (mínimo 0)
         const diasRetraso = Math.max(0, diasPrestamo - DIAS_GRACIA);
         let multaLibro = 0;
@@ -49,7 +53,7 @@ for (let i = 0; i < usuarios.length; i++) {
             console.log(`  Libro ${j + 1}: [PUNTUAL] (${diasPrestamo} días)`);
         } else {
             contadorLibrosRetrasados++;
-            
+
             // Cálculo base: días de retraso por la multa diaria
             multaLibro = diasRetraso * MULTA_DIARIA;
 
